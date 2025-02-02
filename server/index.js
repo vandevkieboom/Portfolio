@@ -6,22 +6,35 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fastify_1 = __importDefault(require("fastify"));
 const cors_1 = __importDefault(require("@fastify/cors"));
 const jwt_1 = __importDefault(require("@fastify/jwt"));
+const cookie_1 = __importDefault(require("@fastify/cookie"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const prisma_1 = require("./lib/prisma");
 dotenv_1.default.config();
 const buildServer = async () => {
     const server = (0, fastify_1.default)({ logger: true });
+    await server.register(cookie_1.default);
     await server.register(cors_1.default, {
         origin: process.env.CLIENT_URL || 'http://localhost:3000',
         credentials: true,
     });
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+        console.error('JWT_SECRET is not defined in the environment variables');
+        process.exit(1);
+    }
     await server.register(jwt_1.default, {
-        secret: process.env.JWT_SECRET || 'your-secret-key',
+        secret: jwtSecret,
     });
     server.decorate('authenticate', async (request, reply) => {
         try {
+            const token = request.cookies.token;
+            if (!token) {
+                return reply.status(401).send({ message: 'Unauthorized' });
+            }
+            request.headers['authorization'] = `Bearer ${token}`;
             await request.jwtVerify();
+            console.log('Decoded JWT:', request.user);
             const user = await prisma_1.prisma.user.findUnique({
                 where: { id: request.user.userId },
             });
@@ -45,7 +58,7 @@ const buildServer = async () => {
             const token = await reply.jwtSign({
                 userId: user.id,
                 role: user.role,
-            });
+            }, { expiresIn: '1h' });
             return { token };
         }
         catch (err) {

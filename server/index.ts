@@ -86,28 +86,64 @@ const buildServer = async (): Promise<FastifyInstance> => {
         { expiresIn: '1h' }
       );
 
-      return { token };
+      reply.setCookie('token', token, {
+        path: '/',
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 60 * 60,
+      });
+
+      return reply.send({ message: 'Login successful' });
     } catch (err) {
       return reply.status(500).send({ message: 'Internal Server Error' });
     }
   });
 
+  server.post('/api/logout', async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      reply.clearCookie('token', { path: '/' });
+      return { message: 'Logged out' };
+    } catch (err) {
+      return reply.status(500).send({ message: 'Internal Server Error' });
+    }
+  });
+
+  server.get('/api/user/me', async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const token = request.cookies.token;
+      if (!token) {
+        return reply.status(401).send({ message: 'Unauthorized' });
+      }
+
+      const decoded = server.jwt.verify<{ userId: number; role: string }>(token);
+      const user = await prisma.user.findUnique({
+        where: { id: decoded.userId },
+        select: { username: true, role: true },
+      });
+
+      if (!user) {
+        return reply.status(404).send({ message: 'User not found' });
+      }
+
+      return reply.send(user);
+    } catch (err) {
+      return reply.status(401).send({ message: 'Invalid token' });
+    }
+  });
+
   server.get(
-    '/api/user/:id',
+    '/api/users',
     { onRequest: [server.authenticate] },
     async (request: FastifyRequest, reply: FastifyReply) => {
-      const { id } = request.params as { id: string };
-
       try {
-        const user = await prisma.user.findUnique({
-          where: { id: Number(id) },
-        });
+        const users = await prisma.user.findMany();
 
-        if (!user) {
-          return reply.status(404).send({ message: 'User not found' });
+        if (users.length === 0) {
+          return reply.status(404).send({ message: 'No users found' });
         }
 
-        return user;
+        return reply.send(users);
       } catch (err) {
         return reply.status(500).send({ message: 'Internal Server Error' });
       }

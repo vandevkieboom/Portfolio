@@ -1,62 +1,52 @@
-import React, { useEffect, useState } from 'react';
-import Cookies from 'js-cookie';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import { useGetCurrentUser, useLogout } from '@/hooks/useAuth';
+import { useRouter } from 'next/router';
 
 const Home = () => {
-  const [user, setUser] = useState<any>(null);
-  const [error, setError] = useState<string>('');
+  const { mutate: logout, isPending } = useLogout();
+  const { data: user } = useGetCurrentUser();
+  const router = useRouter();
 
-  const userId: number = 1;
-
-  const fetchUserData = async () => {
-    const token = Cookies.get('token');
-    console.log('Token:', token);
-
-    try {
-      const res = await fetch(`http://localhost:8080/api/user/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        credentials: 'include',
-      });
-
-      if (!res.ok) {
-        if (res.status === 401) {
-          throw new Error('Unauthorized: Please log in again');
-        }
-        if (res.status === 403) {
-          throw new Error('User requires admin rights');
-        }
-        if (res.status === 404) {
-          throw new Error('User not found');
-        }
-        throw new Error('Something went wrong');
-      }
-
-      const data = await res.json();
-      setUser(data);
-    } catch (err) {
-      setError((err as Error).message);
-    }
+  const handleLogout = () => {
+    logout();
   };
 
-  useEffect(() => {
-    fetchUserData();
-  }, [userId]);
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  if (!user) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <div>
-      <h1>User</h1>
-      <p>Username: {user.username}</p>
-      <p>Role: {user.role}</p>
-      <p>Password: {user.password}</p>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+      <h1 className="text-4xl font-semibold mb-8 text-gray-800">Home Page</h1>
+      <div className="space-y-4">
+        <button
+          onClick={() => router.push('/profile')}
+          className="px-6 py-2 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition duration-200"
+        >
+          Go to Profile
+        </button>
+        <button
+          onClick={() => router.push('/admin')}
+          className="px-6 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition duration-200"
+        >
+          Go to Admin
+        </button>
+
+        {user && (
+          <button
+            onClick={handleLogout}
+            className="px-6 py-2 bg-gray-500 text-white rounded-lg shadow-md hover:bg-gray-600 transition duration-200"
+            disabled={isPending}
+          >
+            {isPending ? 'Logging out...' : 'Logout'}
+          </button>
+        )}
+
+        {!user && (
+          <button
+            onClick={() => router.push('/login')}
+            className="px-6 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition duration-200"
+          >
+            Go to Login
+          </button>
+        )}
+      </div>
     </div>
   );
 };
