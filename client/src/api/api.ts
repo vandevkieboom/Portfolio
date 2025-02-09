@@ -15,6 +15,36 @@ export interface LoginCredentials {
   password: string;
 }
 
+export interface Blog {
+  id: number;
+  title: string;
+  content: string;
+  authorId: number;
+  author: {
+    username: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const getBlogs = async (): Promise<Blog[]> => {
+  try {
+    const response: AxiosResponse = await axios.get('/blogs');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createBlog = async (data: { title: string; content: string }): Promise<Blog> => {
+  try {
+    const response: AxiosResponse = await axios.post('/blogs', data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getCurrentUser = async (): Promise<User> => {
   try {
     const response: AxiosResponse = await axios.get('/user/me', { withCredentials: true });

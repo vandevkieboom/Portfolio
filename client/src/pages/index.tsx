@@ -28,6 +28,13 @@ const Home = () => {
           Go to Admin
         </button>
 
+        <button
+          onClick={() => router.push('/blog')}
+          className="px-6 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition duration-200"
+        >
+          View Blogs
+        </button>
+
         {user && (
           <button
             onClick={handleLogout}
