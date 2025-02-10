@@ -59,22 +59,98 @@ const buildServer = async () => {
                 userId: user.id,
                 role: user.role,
             }, { expiresIn: '1h' });
-            return { token };
+            reply.setCookie('token', token, {
+                path: '/',
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                maxAge: 60 * 60,
+            });
+            return reply.send({ message: 'Login successful' });
         }
         catch (err) {
             return reply.status(500).send({ message: 'Internal Server Error' });
         }
     });
-    server.get('/api/user/:id', { onRequest: [server.authenticate] }, async (request, reply) => {
-        const { id } = request.params;
+    server.post('/api/logout', async (request, reply) => {
         try {
+            reply.clearCookie('token', { path: '/' });
+            return { message: 'Logged out' };
+        }
+        catch (err) {
+            return reply.status(500).send({ message: 'Internal Server Error' });
+        }
+    });
+    server.get('/api/user/me', async (request, reply) => {
+        try {
+            const token = request.cookies.token;
+            if (!token) {
+                return reply.status(401).send({ message: 'Unauthorized' });
+            }
+            const decoded = server.jwt.verify(token);
             const user = await prisma_1.prisma.user.findUnique({
-                where: { id: Number(id) },
+                where: { id: decoded.userId },
+                select: { username: true, role: true },
             });
             if (!user) {
                 return reply.status(404).send({ message: 'User not found' });
             }
-            return user;
+            return reply.send(user);
+        }
+        catch (err) {
+            return reply.status(401).send({ message: 'Invalid token' });
+        }
+    });
+    server.get('/api/users', { onRequest: [server.authenticate] }, async (request, reply) => {
+        try {
+            const users = await prisma_1.prisma.user.findMany();
+            if (users.length === 0) {
+                return reply.status(404).send({ message: 'No users found' });
+            }
+            return reply.send(users);
+        }
+        catch (err) {
+            return reply.status(500).send({ message: 'Internal Server Error' });
+        }
+    });
+    server.get('/api/blogs', async (request, reply) => {
+        try {
+            const blogs = await prisma_1.prisma.blog.findMany({
+                include: {
+                    author: {
+                        select: {
+                            username: true,
+                        },
+                    },
+                },
+                orderBy: {
+                    createdAt: 'desc',
+                },
+            });
+            return reply.send(blogs);
+        }
+        catch (err) {
+            return reply.status(500).send({ message: 'Internal Server Error' });
+        }
+    });
+    server.post('/api/blogs', { onRequest: [server.authenticate] }, async (request, reply) => {
+        const { title, content } = request.body;
+        try {
+            const blog = await prisma_1.prisma.blog.create({
+                data: {
+                    title,
+                    content,
+                    authorId: request.user.userId,
+                },
+                include: {
+                    author: {
+                        select: {
+                            username: true,
+                        },
+                    },
+                },
+            });
+            return reply.send(blog);
         }
         catch (err) {
             return reply.status(500).send({ message: 'Internal Server Error' });
