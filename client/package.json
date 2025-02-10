@@ -12,7 +12,6 @@
     "@tanstack/react-query": "^5.66.0",
     "axios": "^1.7.9",
     "js-cookie": "^3.0.5",
-    "next": "15.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -21,6 +20,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "next": "^15.1.6",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
