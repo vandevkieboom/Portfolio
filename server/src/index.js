@@ -81,6 +81,9 @@ const buildServer = async () => {
             return reply.status(500).send({ message: 'Internal Server Error' });
         }
     });
+    server.get('/', async (request, reply) => {
+        return reply.send('API is running');
+    });
     server.get('/api/user/me', async (request, reply) => {
         try {
             const token = request.cookies.token;
