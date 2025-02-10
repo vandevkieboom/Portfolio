@@ -1,11 +1,11 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "src/index.js",
+  "main": "src/api/index.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.ts"
+    "start": "node src/api/index.js",
+    "dev": "nodemon src/api/index.ts"
   },
   "keywords": [],
   "author": "",

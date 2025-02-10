@@ -9,7 +9,7 @@ const jwt_1 = __importDefault(require("@fastify/jwt"));
 const cookie_1 = __importDefault(require("@fastify/cookie"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const prisma_1 = require("./lib/prisma");
+const prisma_1 = require("../lib/prisma");
 dotenv_1.default.config();
 const buildServer = async () => {
     const server = (0, fastify_1.default)({ logger: true });

@@ -4,7 +4,7 @@ import fastifyJWT from '@fastify/jwt';
 import fastifyCookie from '@fastify/cookie';
 import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
-import { prisma } from './lib/prisma';
+import { prisma } from '../lib/prisma';
 dotenv.config();
 
 declare module 'fastify' {
