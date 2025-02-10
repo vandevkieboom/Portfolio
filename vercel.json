@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "client/**", "use": "@vercel/static" },
+    { "src": "server/**", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "server/api/$1" },
+    { "src": "/(.*)", "dest": "client/$1" }
+  ],
+  "projectSettings": {
+    "framework": null
+  }
+}
