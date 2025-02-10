@@ -12,3 +12,5 @@ Wanneer je handmatig naar /admin navigeert:
 - React Query moet de gebruikersgegevens opnieuw ophalen met getCurrentUser.
 - Tijdens dit eerste laden is user nog niet gedefinieerd terwijl het verzoek wordt uitgevoerd.
 - De ProtectedRoute-component ziet !user en leidt je door naar /unauthorized voordat de gegevens binnenkomen.
+
+commit
