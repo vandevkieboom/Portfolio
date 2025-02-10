@@ -108,6 +108,10 @@ const buildServer = async (): Promise<FastifyInstance> => {
     }
   });
 
+  server.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
+    return reply.send('API is running');
+  });
+
   server.get('/api/user/me', async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const token = request.cookies.token;
