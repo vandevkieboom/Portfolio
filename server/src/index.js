@@ -7,9 +7,11 @@ const fastify_1 = __importDefault(require("fastify"));
 const cors_1 = __importDefault(require("@fastify/cors"));
 const jwt_1 = __importDefault(require("@fastify/jwt"));
 const cookie_1 = __importDefault(require("@fastify/cookie"));
-const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const prisma_1 = require("./lib/prisma");
+const auth_1 = require("./middleware/auth");
+const auth_2 = __importDefault(require("./routes/auth"));
+const user_1 = __importDefault(require("./routes/user"));
+const blog_1 = __importDefault(require("./routes/blog"));
 dotenv_1.default.config();
 const buildServer = async () => {
     const server = (0, fastify_1.default)({ logger: true });
@@ -23,141 +25,13 @@ const buildServer = async () => {
         console.error('JWT_SECRET is not defined in the environment variables');
         process.exit(1);
     }
-    await server.register(jwt_1.default, {
-        secret: jwtSecret,
-    });
-    server.decorate('authenticate', async (request, reply) => {
-        try {
-            const token = request.cookies.token;
-            if (!token) {
-                return reply.status(401).send({ message: 'Unauthorized' });
-            }
-            request.headers['authorization'] = `Bearer ${token}`;
-            await request.jwtVerify();
-            console.log('Decoded JWT:', request.user);
-            const user = await prisma_1.prisma.user.findUnique({
-                where: { id: request.user.userId },
-            });
-            if (!user || user.role !== 'ADMIN') {
-                return reply.status(403).send({ message: 'Admin access required' });
-            }
-        }
-        catch (err) {
-            reply.send(err);
-        }
-    });
-    server.post('/api/login', async (request, reply) => {
-        const { username, password } = request.body;
-        try {
-            const user = await prisma_1.prisma.user.findUnique({
-                where: { username },
-            });
-            if (!user || !(await bcryptjs_1.default.compare(password, user.password))) {
-                return reply.status(401).send({ message: 'Invalid credentials' });
-            }
-            const token = await reply.jwtSign({
-                userId: user.id,
-                role: user.role,
-            }, { expiresIn: '1h' });
-            reply.setCookie('token', token, {
-                path: '/',
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'lax',
-                maxAge: 60 * 60,
-            });
-            return reply.send({ message: 'Login successful' });
-        }
-        catch (err) {
-            return reply.status(500).send({ message: 'Internal Server Error' });
-        }
-    });
-    server.post('/api/logout', async (request, reply) => {
-        try {
-            reply.clearCookie('token', { path: '/' });
-            return { message: 'Logged out' };
-        }
-        catch (err) {
-            return reply.status(500).send({ message: 'Internal Server Error' });
-        }
-    });
+    await server.register(jwt_1.default, { secret: jwtSecret });
+    server.decorate('authenticate', auth_1.authenticate);
+    await server.register(auth_2.default);
+    await server.register(user_1.default);
+    await server.register(blog_1.default);
     server.get('/', async (request, reply) => {
         return reply.send('API is running');
-    });
-    server.get('/api/user/me', async (request, reply) => {
-        try {
-            const token = request.cookies.token;
-            if (!token) {
-                return reply.status(401).send({ message: 'Unauthorized' });
-            }
-            const decoded = server.jwt.verify(token);
-            const user = await prisma_1.prisma.user.findUnique({
-                where: { id: decoded.userId },
-                select: { username: true, role: true },
-            });
-            if (!user) {
-                return reply.status(404).send({ message: 'User not found' });
-            }
-            return reply.send(user);
-        }
-        catch (err) {
-            return reply.status(401).send({ message: 'Invalid token' });
-        }
-    });
-    server.get('/api/users', { onRequest: [server.authenticate] }, async (request, reply) => {
-        try {
-            const users = await prisma_1.prisma.user.findMany();
-            if (users.length === 0) {
-                return reply.status(404).send({ message: 'No users found' });
-            }
-            return reply.send(users);
-        }
-        catch (err) {
-            return reply.status(500).send({ message: 'Internal Server Error' });
-        }
-    });
-    server.get('/api/blogs', async (request, reply) => {
-        try {
-            const blogs = await prisma_1.prisma.blog.findMany({
-                include: {
-                    author: {
-                        select: {
-                            username: true,
-                        },
-                    },
-                },
-                orderBy: {
-                    createdAt: 'desc',
-                },
-            });
-            return reply.send(blogs);
-        }
-        catch (err) {
-            return reply.status(500).send({ message: 'Internal Server Error' });
-        }
-    });
-    server.post('/api/blogs', { onRequest: [server.authenticate] }, async (request, reply) => {
-        const { title, content } = request.body;
-        try {
-            const blog = await prisma_1.prisma.blog.create({
-                data: {
-                    title,
-                    content,
-                    authorId: request.user.userId,
-                },
-                include: {
-                    author: {
-                        select: {
-                            username: true,
-                        },
-                    },
-                },
-            });
-            return reply.send(blog);
-        }
-        catch (err) {
-            return reply.status(500).send({ message: 'Internal Server Error' });
-        }
     });
     return server;
 };
