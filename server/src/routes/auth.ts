@@ -31,7 +31,12 @@ export default async function authRoutes(server: FastifyInstance) {
 
   server.post('/api/logout', async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-      reply.clearCookie('token', { path: '/' });
+      reply.clearCookie('token', {
+        path: '/',
+        httpOnly: true,
+        sameSite: 'none',
+        secure: process.env.NODE_ENV === 'production',
+      });
       return { message: 'Logged out' };
     } catch (err) {
       return reply.status(500).send({ message: 'Internal Server Error' });
