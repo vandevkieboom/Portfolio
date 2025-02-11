@@ -20,12 +20,16 @@ declare module '@fastify/jwt' {
   }
 }
 
-const app: FastifyInstance = Fastify({
-  logger: true,
-  disableRequestLogging: process.env.NODE_ENV === 'production',
-});
+let app: FastifyInstance;
 
 const init = async () => {
+  if (app) return app;
+
+  app = Fastify({
+    logger: true,
+    disableRequestLogging: process.env.NODE_ENV === 'production',
+  });
+
   try {
     await app.register(fastifyCookie);
     await app.register(fastifyCors, {
