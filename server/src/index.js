@@ -7,49 +7,71 @@ const fastify_1 = __importDefault(require("fastify"));
 const cors_1 = __importDefault(require("@fastify/cors"));
 const jwt_1 = __importDefault(require("@fastify/jwt"));
 const cookie_1 = __importDefault(require("@fastify/cookie"));
-const dotenv_1 = __importDefault(require("dotenv"));
 const auth_1 = require("./middleware/auth");
 const auth_2 = __importDefault(require("./routes/auth"));
 const user_1 = __importDefault(require("./routes/user"));
 const blog_1 = __importDefault(require("./routes/blog"));
-dotenv_1.default.config();
-const buildServer = async () => {
-    const server = (0, fastify_1.default)({ logger: true });
-    await server.register(cookie_1.default);
-    await server.register(cors_1.default, {
-        origin: process.env.CLIENT_URL || 'http://localhost:3000',
-        credentials: true,
-    });
-    const jwtSecret = process.env.JWT_SECRET;
-    if (!jwtSecret) {
-        console.error('JWT_SECRET is not defined in the environment variables');
-        process.exit(1);
-    }
-    await server.register(jwt_1.default, { secret: jwtSecret });
-    server.decorate('authenticate', auth_1.authenticate);
-    await server.register(auth_2.default);
-    await server.register(user_1.default);
-    await server.register(blog_1.default);
-    server.get('/', async (request, reply) => {
-        return reply.send('API is running');
-    });
-    return server;
-};
-const startServer = async () => {
+const app = (0, fastify_1.default)({
+    logger: true,
+    disableRequestLogging: process.env.NODE_ENV === 'production',
+});
+const init = async () => {
     try {
-        const server = await buildServer();
-        const port = process.env.PORT ? Number(process.env.PORT) : 8080;
-        await server.listen({ port });
-        console.log(`Server running on port ${port}`);
-        process.on('SIGINT', async () => {
-            await server.close();
-            console.log('Server shut down gracefully');
-            process.exit(0);
+        await app.register(cookie_1.default);
+        await app.register(cors_1.default, {
+            origin: process.env.CLIENT_URL || 'http://localhost:3000',
+            credentials: true,
         });
+        const jwtSecret = process.env.JWT_SECRET;
+        if (!jwtSecret) {
+            throw new Error('JWT_SECRET is not defined in the environment variables');
+        }
+        await app.register(jwt_1.default, { secret: jwtSecret });
+        app.decorate('authenticate', auth_1.authenticate);
+        await app.register(auth_2.default);
+        await app.register(user_1.default);
+        await app.register(blog_1.default);
+        app.get('/', async (request, reply) => {
+            return reply.send('API is running');
+        });
+        app.get('/api/health', async () => {
+            return { status: 'ok' };
+        });
+        await app.ready();
+        return app;
     }
     catch (err) {
-        console.error('Error starting the server:', err instanceof Error ? err.message : err);
-        process.exit(1);
+        console.error('Error initializing server:', err);
+        throw err;
     }
 };
-startServer();
+exports.default = async (req, res) => {
+    try {
+        const server = await init();
+        server.server.emit('request', req, res);
+    }
+    catch (err) {
+        console.error('Error handling request:', err);
+        res.status(500).send('Internal Server Error');
+    }
+};
+if (process.env.NODE_ENV !== 'production') {
+    const startServer = async () => {
+        try {
+            const server = await init();
+            const port = process.env.PORT ? Number(process.env.PORT) : 8080;
+            await server.listen({ port });
+            console.log(`Server running on port ${port}`);
+            process.on('SIGINT', async () => {
+                await server.close();
+                console.log('Server shut down gracefully');
+                process.exit(0);
+            });
+        }
+        catch (err) {
+            console.error('Error starting the server:', err instanceof Error ? err.message : err);
+            process.exit(1);
+        }
+    };
+    startServer();
+}

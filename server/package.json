@@ -1,11 +1,12 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "src/index.js",
+  "main": "api/index.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.ts"
+    "start": "node api/index.js",
+    "dev": "nodemon src/index.ts",
+    "vercel-build": "prisma generate && tsc"
   },
   "keywords": [],
   "author": "",
