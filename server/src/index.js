@@ -11,11 +11,14 @@ const auth_1 = require("./middleware/auth");
 const auth_2 = __importDefault(require("./routes/auth"));
 const user_1 = __importDefault(require("./routes/user"));
 const blog_1 = __importDefault(require("./routes/blog"));
-const app = (0, fastify_1.default)({
-    logger: true,
-    disableRequestLogging: process.env.NODE_ENV === 'production',
-});
+let app;
 const init = async () => {
+    if (app)
+        return app;
+    app = (0, fastify_1.default)({
+        logger: true,
+        disableRequestLogging: process.env.NODE_ENV === 'production',
+    });
     try {
         await app.register(cookie_1.default);
         await app.register(cors_1.default, {
@@ -48,6 +51,7 @@ const init = async () => {
 exports.default = async (req, res) => {
     try {
         const server = await init();
+        await server.ready();
         server.server.emit('request', req, res);
     }
     catch (err) {
