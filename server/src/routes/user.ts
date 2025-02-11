@@ -5,6 +5,7 @@ export default async function userRoutes(server: FastifyInstance) {
   server.get('/api/user/me', async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const token = request.cookies.token;
+      console.log(token);
       if (!token) {
         return reply.status(401).send({ message: 'Unauthorized' });
       }
