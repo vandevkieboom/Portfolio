@@ -1,5 +1,24 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { login, logout, LoginCredentials, getCurrentUser, User, getUsers, getBlogs, Blog, createBlog } from '@/api/api';
+import {
+  login,
+  logout,
+  LoginCredentials,
+  getCurrentUser,
+  User,
+  getUsers,
+  getBlogs,
+  Blog,
+  createBlog,
+  getBlogById,
+} from '@/api/api';
+
+export const useGetBlogById = (id: string) => {
+  return useQuery<Blog, Error>({
+    queryKey: ['blog', id],
+    queryFn: () => getBlogById(id),
+    enabled: !!id,
+  });
+};
 
 export const useGetBlogs = () => {
   return useQuery<Blog[], Error>({

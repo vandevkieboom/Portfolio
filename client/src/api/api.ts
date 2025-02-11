@@ -27,6 +27,15 @@ export interface Blog {
   updatedAt: string;
 }
 
+export const getBlogById = async (id: string): Promise<Blog> => {
+  try {
+    const response: AxiosResponse = await axios.get(`/blogs/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getBlogs = async (): Promise<Blog[]> => {
   try {
     const response: AxiosResponse = await axios.get('/blogs');
