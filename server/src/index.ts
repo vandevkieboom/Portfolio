@@ -64,6 +64,8 @@ const init = async () => {
 export default async (req: any, res: any) => {
   try {
     const server = await init();
+    await server.ready();
+
     server.server.emit('request', req, res);
   } catch (err) {
     console.error('Error handling request:', err);
