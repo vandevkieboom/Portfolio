@@ -4,7 +4,6 @@ import { useGetBlogs, useGetCurrentUser, useLogout } from '@/hooks/useAuth';
 import { FaLongArrowAltRight, FaCalendar, FaLinkedinIn, FaGithub, FaFileDownload, FaMoon, FaSun } from 'react-icons/fa';
 import { IoMdBriefcase, IoMdMail } from 'react-icons/io';
 import { FaLocationDot } from 'react-icons/fa6';
-import Layout from '@/components/Layout';
 
 const LatestBlogSkeleton = () => (
   <div className="bg-white dark:bg-gray-900 p-8 border border-gray-100 dark:border-gray-700 animate-pulse">
@@ -26,30 +25,6 @@ const LandingPage = () => {
   const router = useRouter();
   const { data: blogs = [], isLoading } = useGetBlogs();
   const latestBlog = blogs[0];
-  const { mutate: logout, isPending } = useLogout();
-  const { data: user } = useGetCurrentUser();
-  const [darkMode, setDarkMode] = useState(false);
-
-  useEffect(() => {
-    // Check if user has a dark mode preference saved
-    const isDark = localStorage.getItem('darkMode') === 'true';
-    setDarkMode(isDark);
-
-    // Apply the class to body immediately on mount
-    if (isDark) {
-      document.body.classList.add('dark');
-    }
-  }, []);
-
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    localStorage.setItem('darkMode', (!darkMode).toString());
-    document.body.classList.toggle('dark');
-  };
-
-  const handleDownloadResume = () => {
-    window.open('/resume.pdf', '_blank');
-  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
@@ -58,7 +33,7 @@ const LandingPage = () => {
           <h1 className="text-7xl font-bold mb-8 dark:text-white">
             Hello, I'm
             <br />
-            Van Dev Kieboom
+            Jordy Van Den Kieboom
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl">
             Junior Developer with a passion for creating elegant, functional web applications. Currently interning at
@@ -105,7 +80,7 @@ const LandingPage = () => {
               <img
                 src="/me.png"
                 alt="Profile"
-                className="w-full aspect-square object-cover grayscale hover:grayscale-0 transition-all duration-500 rounded-full"
+                className="w-full aspect-square object-cover grayscale hover:grayscale-0 transition-all duration-500 rounded-full shadow-md"
               />
             </div>
             <div>
