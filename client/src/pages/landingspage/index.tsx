@@ -33,7 +33,7 @@ const LandingPage = () => {
             Read My Blog Posts
           </button>
 
-          {!user && (
+          {user && (
             <button
               onClick={() => router.push('/login')}
               className="mx-4 bg-white text-black px-6 py-3 rounded-lg font-medium hover:bg-red-400 transition-colors"

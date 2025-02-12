@@ -19,7 +19,7 @@ export default async function authRoutes(server: FastifyInstance) {
         path: '/',
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'none',
+        sameSite: 'lax',
         maxAge: 60 * 60,
       });
 

@@ -6,6 +6,7 @@ async function userRoutes(server) {
     server.get('/api/user/me', async (request, reply) => {
         try {
             const token = request.cookies.token;
+            console.log(token);
             if (!token) {
                 return reply.status(401).send({ message: 'Unauthorized' });
             }

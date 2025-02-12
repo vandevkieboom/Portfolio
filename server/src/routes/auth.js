@@ -30,7 +30,12 @@ async function authRoutes(server) {
     });
     server.post('/api/logout', async (request, reply) => {
         try {
-            reply.clearCookie('token', { path: '/' });
+            reply.clearCookie('token', {
+                path: '/',
+                httpOnly: true,
+                sameSite: 'none',
+                secure: process.env.NODE_ENV === 'production',
+            });
             return { message: 'Logged out' };
         }
         catch (err) {
