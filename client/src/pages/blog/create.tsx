@@ -1,21 +1,32 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useCreateBlog } from '@/hooks/useAuth';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import RichTextEditor from '@/components/RichTextEditor';
 
-const CreateBlogPage = () => {
+interface FormElements extends HTMLFormControlsCollection {
+  title: HTMLInputElement;
+}
+
+interface BlogForm extends HTMLFormElement {
+  readonly elements: FormElements;
+}
+
+const CreateBlogPage: React.FC = () => {
   const router = useRouter();
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const [title, setTitle] = useState<string>('');
+  const [content, setContent] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
   const createBlogMutation = useCreateBlog();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<BlogForm>) => {
     e.preventDefault();
     try {
       await createBlogMutation.mutateAsync({ title, content });
       router.push('/blog');
     } catch (error) {
       console.error('Failed to create blog:', error);
+      setError('Failed to create blog post. Please try again.');
     }
   };
 
@@ -33,7 +44,7 @@ const CreateBlogPage = () => {
               type="text"
               id="title"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
               required
             />
@@ -43,14 +54,9 @@ const CreateBlogPage = () => {
             <label htmlFor="content" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Content
             </label>
-            <textarea
-              id="content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              rows={10}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-              required
-            />
+
+            {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+            <RichTextEditor content={content} onChange={setContent} error={error} setError={setError} />
           </div>
 
           <div className="flex justify-end gap-4">

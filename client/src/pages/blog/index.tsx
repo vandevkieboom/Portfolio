@@ -27,7 +27,7 @@ const BlogsPage = () => {
             onClick={() => router.push('/blog/create')}
             className="px-4 py-2 border border-black dark:border-white text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all"
           >
-            Create New Post
+            Create New Blog
           </button>
         )}
       </div>
@@ -48,9 +48,12 @@ const BlogsPage = () => {
                   <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
                 </div>
                 <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-4">{blog.title}</h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  {blog.content.length > 200 ? `${blog.content.substring(0, 200)}...` : blog.content}
-                </p>
+                <p
+                  className="text-gray-600 dark:text-gray-400 mb-6"
+                  dangerouslySetInnerHTML={{
+                    __html: blog.content.length > 200 ? `${blog.content.substring(0, 200)}...` : blog.content,
+                  }}
+                />
                 <div className="flex items-center gap-2 text-black dark:text-white group">
                   Read more
                   <FaLongArrowAltRight className="group-hover:translate-x-2 transition-transform" />

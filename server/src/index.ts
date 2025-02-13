@@ -28,6 +28,7 @@ const init = async () => {
   app = Fastify({
     logger: true,
     disableRequestLogging: process.env.NODE_ENV === 'production',
+    bodyLimit: 5 * 1024 * 1024,
   });
 
   try {

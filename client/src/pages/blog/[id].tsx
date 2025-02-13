@@ -50,9 +50,7 @@ const BlogDetailPage = () => {
         <div className="text-sm text-gray-500 dark:text-gray-400 mb-8">
           By {blog.author.username} • {new Date(blog.createdAt).toLocaleDateString()}
         </div>
-        <div className="prose dark:prose-invert max-w-none">
-          <p className="text-gray-600 dark:text-gray-300 whitespace-pre-wrap">{blog.content}</p>
-        </div>
+        <div className="prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: blog.content }} />
       </article>
     </div>
   );

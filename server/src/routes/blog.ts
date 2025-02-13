@@ -1,6 +1,8 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { prisma } from '../lib/prisma';
 
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+
 export default async function blogRoutes(server: FastifyInstance) {
   server.get('/api/blogs', async (request: FastifyRequest, reply: FastifyReply) => {
     try {
@@ -41,6 +43,19 @@ export default async function blogRoutes(server: FastifyInstance) {
     { onRequest: [server.authenticate] },
     async (request: FastifyRequest, reply: FastifyReply) => {
       const { title, content } = request.body as { title: string; content: string };
+
+      const base64Images = content.match(/<img[^>]+src="data:image\/[^;]+;base64,([^"]+)"/g);
+
+      if (base64Images) {
+        for (const img of base64Images) {
+          const base64Data = img.split(',')[1];
+          const buffer = Buffer.from(base64Data, 'base64');
+
+          if (buffer.length > MAX_IMAGE_SIZE) {
+            return reply.status(400).send({ message: 'Image is too large. Max size is 5MB.' });
+          }
+        }
+      }
 
       try {
         const blog = await prisma.blog.create({

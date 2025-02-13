@@ -66,11 +66,22 @@ const Layout = ({ children }: { children: ReactNode }) => {
                 Blog
               </button>
               <button
-                onClick={handleDownloadResume}
-                className="flex items-center gap-2 px-4 py-2 border border-black dark:border-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black dark:text-white transition-all"
+                onClick={() => alert('Not implemented yet!')}
+                className={`text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors ${
+                  isActivePath('/skills') || router.pathname.startsWith('/skills/') ? 'text-black dark:text-white' : ''
+                }`}
               >
-                <FaFileDownload />
-                Resume
+                Skills
+              </button>
+              <button
+                onClick={() => alert('Not implemented yet!')}
+                className={`text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors ${
+                  isActivePath('/internship') || router.pathname.startsWith('/internship/')
+                    ? 'text-black dark:text-white'
+                    : ''
+                }`}
+              >
+                Internship
               </button>
               {!user ? (
                 <button
