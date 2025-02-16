@@ -35,12 +35,10 @@ const Layout = ({ children }: { children: ReactNode }) => {
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
       <nav className="fixed w-full backdrop-blur-sm bg-white/70 dark:bg-gray-900/70 z-50 border-b border-gray-100 dark:border-gray-800">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-          {/* Logo */}
           <div onClick={() => router.push('/')} className="text-xl font-medium dark:text-white cursor-pointer">
             vandevkieboom
           </div>
 
-          {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-6">
             <button
               onClick={toggleDarkMode}
@@ -48,10 +46,10 @@ const Layout = ({ children }: { children: ReactNode }) => {
             >
               {darkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
             </button>
-            {['/', '/blog', '/skills', '/internship'].map((path) => (
+            {['/', '/Blog', '/Skills', '/Internship'].map((path) => (
               <button
                 key={path}
-                onClick={() => router.push(path)}
+                onClick={() => router.push(path.toLocaleLowerCase())}
                 className={`text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors ${
                   isActivePath(path) ? 'text-black dark:text-white' : ''
                 }`}
@@ -79,13 +77,11 @@ const Layout = ({ children }: { children: ReactNode }) => {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
           <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-gray-600 dark:text-gray-400">
             {menuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
           </button>
         </div>
 
-        {/* Mobile Menu */}
         {menuOpen && (
           <div className="md:hidden flex flex-col items-center gap-4 pb-4">
             <button
@@ -94,11 +90,11 @@ const Layout = ({ children }: { children: ReactNode }) => {
             >
               {darkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
             </button>
-            {['/', '/blog', '/skills', '/internship'].map((path) => (
+            {['/', '/Blog', '/Skills', '/Internship'].map((path) => (
               <button
                 key={path}
                 onClick={() => {
-                  router.push(path);
+                  router.push(path.toLocaleLowerCase());
                   setMenuOpen(false);
                 }}
                 className={`text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors ${
