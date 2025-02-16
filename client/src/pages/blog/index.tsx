@@ -1,6 +1,7 @@
 import { useGetBlogs, useGetCurrentUser } from '@/hooks/useAuth';
 import { useRouter } from 'next/router';
 import { FaCalendar, FaLongArrowAltRight } from 'react-icons/fa';
+import { IoMdCreate } from 'react-icons/io';
 
 const BlogSkeleton = () => (
   <div className="bg-white dark:bg-gray-800 p-8 border border-gray-100 dark:border-gray-700 animate-pulse">
@@ -20,14 +21,14 @@ const BlogsPage = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-12">
-      <div className="flex justify-between items-center mb-8">
+      <div className="mb-12">
         <h1 className="text-4xl font-bold dark:text-white">Blog Posts</h1>
         {user?.role === 'ADMIN' && (
           <button
             onClick={() => router.push('/blog/create')}
-            className="px-4 py-2 border border-black dark:border-white text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all"
+            className="mt-4 p-3 border border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition-colors dark:text-white"
           >
-            Create New Blog
+            <IoMdCreate size={20} />
           </button>
         )}
       </div>

@@ -39,7 +39,10 @@ const Layout = ({ children }: { children: ReactNode }) => {
       <nav className="fixed w-full backdrop-blur-sm bg-white/70 dark:bg-gray-900/70 z-50 border-b border-gray-100 dark:border-gray-800">
         <div className="max-w-6xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div onClick={() => router.push('/')} className="text-xl font-medium dark:text-white cursor-pointer">
+            <div
+              onClick={() => router.push('/')}
+              className="text-xl font-medium dark:text-white cursor-pointer w-[140px]"
+            >
               vandevkieboom
             </div>
             <div className="flex items-center gap-6">
@@ -66,7 +69,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
                 Blog
               </button>
               <button
-                onClick={() => alert('Not implemented yet!')}
+                onClick={() => router.push('/skills')}
                 className={`text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors ${
                   isActivePath('/skills') || router.pathname.startsWith('/skills/') ? 'text-black dark:text-white' : ''
                 }`}

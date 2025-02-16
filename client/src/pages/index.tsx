@@ -93,7 +93,7 @@ const LandingPage = () => {
               <img
                 src="/me.png"
                 alt="Profile"
-                className="w-full aspect-square object-cover grayscale hover:grayscale-0 transition-all duration-500 rounded-lg shadow-md"
+                className="w-full aspect-square object-cover grayscale hover:grayscale-0 transition-all duration-500 rounded-full shadow-md"
               />
             </div>
             <div>
@@ -103,8 +103,7 @@ const LandingPage = () => {
                 self-study and experimentation, I decided to participate in a bootcamp at BeCode, where I got a taste of
                 this fascinating world. Unfortunately, BeCode in Antwerp was closed due to financial circumstances.
                 Following that, I decided to continue my education and enrolled in the Programming Graduation Program at
-                AP University College Antwerp. I successfully passed both years with an average of 87% and am now doing
-                my internship.
+                AP University College Antwerp.
               </p>
               <div className="space-y-4 mb-8 text-gray-600 dark:text-gray-400">
                 <div className="flex items-center gap-3">
@@ -116,38 +115,46 @@ const LandingPage = () => {
                   <span>Antwerp, Belgium</span>
                 </div>
               </div>
-              <p className="text-black mb-2 dark:text-white">socials</p>
-              <div className="flex gap-4">
-                <a
-                  href="https://linkedin.com/in/vandevkieboom"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 border border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition-colors dark:text-white"
-                >
-                  <FaLinkedinIn size={20} />
-                </a>
-                <a
-                  href="https://github.com/vandevkieboom"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 border border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition-colors dark:text-white"
-                >
-                  <FaGithub size={20} />
-                </a>
-                <a
-                  href="mailto:vandevkieboom@gmail.com"
-                  className="p-3 border border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition-colors dark:text-white"
-                >
-                  <IoMdMail size={20} />
-                </a>
+
+              <div className="grid grid-cols-1 md:grid-cols-2">
+                <div>
+                  <p className="text-black mb-2 dark:text-white">socials</p>
+                  <div className="flex gap-4">
+                    <a
+                      href="https://linkedin.com/in/vandevkieboom"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-3 border border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition-colors dark:text-white"
+                    >
+                      <FaLinkedinIn size={20} />
+                    </a>
+                    <a
+                      href="https://github.com/vandevkieboom"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-3 border border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition-colors dark:text-white"
+                    >
+                      <FaGithub size={20} />
+                    </a>
+                    <a
+                      href="mailto:vandevkieboom@gmail.com"
+                      className="p-3 border border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition-colors dark:text-white"
+                    >
+                      <IoMdMail size={20} />
+                    </a>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-black mb-2 dark:text-white">curriculum vitae</p>
+                  <button
+                    onClick={handleDownloadResume}
+                    className="flex items-center gap-2 p-3 border border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition-colors dark:text-white"
+                  >
+                    <FaFileDownload size={20} />
+                  </button>
+                </div>
               </div>
-              <p className="text-black mb-2 mt-4 dark:text-white">curriculum vitae</p>
-              <button
-                onClick={handleDownloadResume}
-                className="flex items-center gap-2 p-3 border border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition-colors dark:text-white"
-              >
-                <FaFileDownload size={20} />
-              </button>
             </div>
           </div>
         </div>
