@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useEditor, EditorContent } from '@tiptap/react';
+import { useEditor, EditorContent, Editor } from '@tiptap/react';
+import { EditorView } from 'prosemirror-view';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
@@ -16,6 +17,7 @@ import {
   FaRedo,
   FaHeading,
 } from 'react-icons/fa';
+import { marked } from 'marked';
 
 interface MenuButtonProps {
   onClick: () => void;
@@ -72,6 +74,26 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ content, onChange, erro
     editorProps: {
       attributes: {
         class: 'prose dark:prose-invert max-w-none p-4 min-h-[300px] outline-none w-full h-full',
+      },
+      handlePaste: (view: EditorView, event: ClipboardEvent) => {
+        const clipboardData = event.clipboardData;
+        if (!clipboardData) return false;
+
+        const text: string = clipboardData.getData('text/plain');
+        if (!text) return false;
+
+        event.preventDefault();
+
+        const result = marked(text);
+        if (result instanceof Promise) {
+          result.then((html) => {
+            (editor as Editor).commands.insertContent(html);
+          });
+        } else {
+          (editor as Editor).commands.insertContent(result);
+        }
+
+        return true;
       },
     },
   });
