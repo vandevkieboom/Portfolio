@@ -6,9 +6,5 @@
 
 body {
   font-family: 'Roboto', serif;
-  /* font-family: 'Montserrat', serif; */
-  /* font-family: "Raleway", serif; */
-  /* font-family: 'Poppins', serif; */
-  /* font-family: 'Inter', serif; */
   transition: background-color 300ms ease-in-out;
 }

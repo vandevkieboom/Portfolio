@@ -1,13 +1,14 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useGetCurrentUser, useLogout } from '@/hooks/useAuth';
-import { FaFileDownload, FaMoon, FaSun } from 'react-icons/fa';
+import { FaFileDownload, FaMoon, FaSun, FaBars, FaTimes } from 'react-icons/fa';
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const { mutate: logout, isPending } = useLogout();
   const { data: user } = useGetCurrentUser();
   const [darkMode, setDarkMode] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -28,86 +29,113 @@ const Layout = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const handleDownloadResume = () => {
-    window.open('/resume.pdf', '_blank');
-  };
-
   const isActivePath = (path: string) => router.pathname === path;
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
       <nav className="fixed w-full backdrop-blur-sm bg-white/70 dark:bg-gray-900/70 z-50 border-b border-gray-100 dark:border-gray-800">
-        <div className="max-w-6xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div
-              onClick={() => router.push('/')}
-              className="text-xl font-medium dark:text-white cursor-pointer w-[140px]"
+        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+          {/* Logo */}
+          <div onClick={() => router.push('/')} className="text-xl font-medium dark:text-white cursor-pointer">
+            vandevkieboom
+          </div>
+
+          {/* Desktop Menu */}
+          <div className="hidden md:flex items-center gap-6">
+            <button
+              onClick={toggleDarkMode}
+              className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors"
             >
-              vandevkieboom
-            </div>
-            <div className="flex items-center gap-6">
+              {darkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
+            </button>
+            {['/', '/blog', '/skills', '/internship'].map((path) => (
               <button
-                onClick={toggleDarkMode}
+                key={path}
+                onClick={() => router.push(path)}
+                className={`text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors ${
+                  isActivePath(path) ? 'text-black dark:text-white' : ''
+                }`}
+              >
+                {path.substring(1) || 'Home'}
+              </button>
+            ))}
+            {!user ? (
+              <button
+                onClick={() => router.push('/login')}
+                className={`text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors ${
+                  isActivePath('/login') ? 'text-black dark:text-white' : ''
+                }`}
+              >
+                Login
+              </button>
+            ) : (
+              <button
+                onClick={() => logout()}
+                disabled={isPending}
                 className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors"
               >
-                {darkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
+                {isPending ? 'Logging out...' : 'Logout'}
               </button>
-              <button
-                onClick={() => router.push('/')}
-                className={`text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors ${
-                  isActivePath('/') ? 'text-black dark:text-white' : ''
-                }`}
-              >
-                Home
-              </button>
-              <button
-                onClick={() => router.push('/blog')}
-                className={`text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors ${
-                  isActivePath('/blog') || router.pathname.startsWith('/blog/') ? 'text-black dark:text-white' : ''
-                }`}
-              >
-                Blog
-              </button>
-              <button
-                onClick={() => router.push('/skills')}
-                className={`text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors ${
-                  isActivePath('/skills') || router.pathname.startsWith('/skills/') ? 'text-black dark:text-white' : ''
-                }`}
-              >
-                Skills
-              </button>
-              <button
-                onClick={() => alert('Not implemented yet!')}
-                className={`text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors ${
-                  isActivePath('/internship') || router.pathname.startsWith('/internship/')
-                    ? 'text-black dark:text-white'
-                    : ''
-                }`}
-              >
-                Internship
-              </button>
-              {!user ? (
-                <button
-                  onClick={() => router.push('/login')}
-                  className={`text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors ${
-                    isActivePath('/login') ? 'text-black dark:text-white' : ''
-                  }`}
-                >
-                  Login
-                </button>
-              ) : (
-                <button
-                  onClick={() => logout()}
-                  disabled={isPending}
-                  className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors"
-                >
-                  {isPending ? 'Logging out...' : 'Logout'}
-                </button>
-              )}
-            </div>
+            )}
           </div>
+
+          {/* Mobile Menu Button */}
+          <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-gray-600 dark:text-gray-400">
+            {menuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+          </button>
         </div>
+
+        {/* Mobile Menu */}
+        {menuOpen && (
+          <div className="md:hidden flex flex-col items-center gap-4 pb-4">
+            <button
+              onClick={toggleDarkMode}
+              className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors"
+            >
+              {darkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
+            </button>
+            {['/', '/blog', '/skills', '/internship'].map((path) => (
+              <button
+                key={path}
+                onClick={() => {
+                  router.push(path);
+                  setMenuOpen(false);
+                }}
+                className={`text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors ${
+                  isActivePath(path) ? 'text-black dark:text-white' : ''
+                }`}
+              >
+                {path.substring(1) || 'Home'}
+              </button>
+            ))}
+            {!user ? (
+              <button
+                onClick={() => {
+                  router.push('/login');
+                  setMenuOpen(false);
+                }}
+                className={`text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors ${
+                  isActivePath('/login') ? 'text-black dark:text-white' : ''
+                }`}
+              >
+                Login
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  logout();
+                  setMenuOpen(false);
+                }}
+                disabled={isPending}
+                className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors"
+              >
+                {isPending ? 'Logging out...' : 'Logout'}
+              </button>
+            )}
+          </div>
+        )}
       </nav>
+
       <main className="pt-20">{children}</main>
     </div>
   );

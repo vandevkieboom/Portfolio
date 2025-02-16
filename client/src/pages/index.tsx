@@ -118,7 +118,7 @@ const LandingPage = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2">
                 <div>
-                  <p className="text-black mb-2 dark:text-white">socials</p>
+                  <p className="text-black mb-2 dark:text-white">Socials</p>
                   <div className="flex gap-4">
                     <a
                       href="https://linkedin.com/in/vandevkieboom"
@@ -146,7 +146,7 @@ const LandingPage = () => {
                 </div>
 
                 <div>
-                  <p className="text-black mb-2 dark:text-white">curriculum vitae</p>
+                  <p className="text-black mb-2 dark:text-white">Curriculum Vitae</p>
                   <button
                     onClick={handleDownloadResume}
                     className="flex items-center gap-2 p-3 border border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition-colors dark:text-white"
