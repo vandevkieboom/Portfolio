@@ -116,7 +116,7 @@ const LandingPage = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2">
+              <div className="space-y-4">
                 <div>
                   <p className="text-black mb-2 dark:text-white">Socials</p>
                   <div className="flex gap-4">
@@ -144,7 +144,6 @@ const LandingPage = () => {
                     </a>
                   </div>
                 </div>
-
                 <div>
                   <p className="text-black mb-2 dark:text-white">Curriculum Vitae</p>
                   <button
