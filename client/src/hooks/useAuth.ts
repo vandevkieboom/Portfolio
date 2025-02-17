@@ -10,6 +10,7 @@ import {
   Blog,
   createBlog,
   getBlogById,
+  CreateBlogData,
 } from '@/api/api';
 
 export const useGetBlogById = (id: string) => {
@@ -30,7 +31,7 @@ export const useGetBlogs = () => {
 export const useCreateBlog = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<Blog, Error, { title: string; content: string }>({
+  return useMutation<Blog, Error, CreateBlogData>({
     mutationFn: createBlog,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['blogs'] });

@@ -66,11 +66,23 @@ const LandingPage = () => {
                   </div>
                   <h3 className="text-2xl font-medium mb-4 dark:text-white">{blog.title}</h3>
                   <p
-                    className="text-gray-600 dark:text-gray-400 mb-6"
+                    className="text-gray-600 dark:text-gray-400 mb-4"
                     dangerouslySetInnerHTML={{
                       __html: blog.content.length > 200 ? `${blog.content.substring(0, 200)}...` : blog.content,
                     }}
                   />
+                  <div className="mb-6">
+                    <div className="flex flex-wrap gap-2">
+                      {blog.tags.map((tag) => (
+                        <span
+                          key={tag.id}
+                          className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1 rounded-full text-sm"
+                        >
+                          {tag.name}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                   <div className="flex items-center gap-2 text-gray-900 dark:text-white group">
                     Read more
                     <FaLongArrowAltRight className="group-hover:translate-x-2 transition-transform" />

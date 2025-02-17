@@ -77,19 +77,18 @@ const Layout = ({ children }: { children: ReactNode }) => {
             )}
           </div>
 
-          <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-gray-600 dark:text-gray-400">
-            {menuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
-          </button>
+          <div className="flex items-center md:hidden gap-7">
+            <button onClick={toggleDarkMode} className="text-gray-600 dark:text-gray-400">
+              {darkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
+            </button>
+            <button onClick={() => setMenuOpen(!menuOpen)} className="text-gray-600 dark:text-gray-400">
+              {menuOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
+            </button>
+          </div>
         </div>
 
         {menuOpen && (
           <div className="md:hidden flex flex-col items-center gap-4 pb-4">
-            <button
-              onClick={toggleDarkMode}
-              className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors"
-            >
-              {darkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
-            </button>
             {['/', '/Blog', '/Skills', '/Internship'].map((path) => (
               <button
                 key={path}
@@ -104,6 +103,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
                 {path.substring(1) || 'Home'}
               </button>
             ))}
+            s
             {!user ? (
               <button
                 onClick={() => {

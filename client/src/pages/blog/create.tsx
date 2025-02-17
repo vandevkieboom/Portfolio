@@ -4,6 +4,8 @@ import { useCreateBlog } from '@/hooks/useAuth';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import RichTextEditor from '@/components/RichTextEditor';
 
+const BLOG_CATEGORIES = ['Technology', 'Programming', 'Web Development', 'Personal', 'Tutorial', 'Career'];
+
 interface FormElements extends HTMLFormControlsCollection {
   title: HTMLInputElement;
 }
@@ -16,13 +18,22 @@ const CreateBlogPage: React.FC = () => {
   const router = useRouter();
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const createBlogMutation = useCreateBlog();
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
+  };
 
   const handleSubmit = async (e: React.FormEvent<BlogForm>) => {
     e.preventDefault();
     try {
-      await createBlogMutation.mutateAsync({ title, content });
+      await createBlogMutation.mutateAsync({
+        title,
+        content,
+        tags: selectedTags,
+      });
       router.push('/blog');
     } catch (error) {
       console.error('Failed to create blog:', error);
@@ -44,17 +55,36 @@ const CreateBlogPage: React.FC = () => {
               type="text"
               id="title"
               value={title}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
+              onChange={(e) => setTitle(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
               required
             />
           </div>
 
           <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Categories</label>
+            <div className="flex flex-wrap gap-2">
+              {BLOG_CATEGORIES.map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  onClick={() => toggleTag(tag)}
+                  className={`px-3 py-1 rounded-full text-sm ${
+                    selectedTags.includes(tag)
+                      ? 'bg-black text-white dark:bg-white dark:text-black'
+                      : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                  } hover:opacity-80 transition-all`}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
             <label htmlFor="content" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Content
             </label>
-
             {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
             <RichTextEditor content={content} onChange={setContent} error={error} setError={setError} />
           </div>

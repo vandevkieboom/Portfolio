@@ -51,6 +51,19 @@ const BlogDetailPage = () => {
           By {blog.author.username} • {new Date(blog.createdAt).toLocaleDateString()}
         </div>
         <div className="prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: blog.content }} />
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Tags</h2>
+          <div className="flex flex-wrap gap-2">
+            {blog.tags.map((tag) => (
+              <span
+                key={tag.id}
+                className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1 rounded-full text-sm"
+              >
+                {tag.name}
+              </span>
+            ))}
+          </div>
+        </div>
       </article>
     </div>
   );

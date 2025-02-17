@@ -15,6 +15,12 @@ export interface LoginCredentials {
   password: string;
 }
 
+export interface Tag {
+  id: number;
+  name: string;
+  blogId: number;
+}
+
 export interface Blog {
   id: number;
   title: string;
@@ -23,8 +29,15 @@ export interface Blog {
   author: {
     username: string;
   };
+  tags: Tag[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface CreateBlogData {
+  title: string;
+  content: string;
+  tags: string[];
 }
 
 export const getBlogById = async (id: string): Promise<Blog> => {
@@ -45,7 +58,7 @@ export const getBlogs = async (): Promise<Blog[]> => {
   }
 };
 
-export const createBlog = async (data: { title: string; content: string }): Promise<Blog> => {
+export const createBlog = async (data: CreateBlogData): Promise<Blog> => {
   try {
     const response: AxiosResponse = await axios.post('/blogs', data);
     return response.data;

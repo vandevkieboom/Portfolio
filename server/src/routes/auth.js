@@ -19,7 +19,7 @@ async function authRoutes(server) {
                 path: '/',
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
-                sameSite: 'lax',
+                sameSite: 'none',
                 maxAge: 60 * 60,
             });
             return reply.send({ message: 'Login successful' });

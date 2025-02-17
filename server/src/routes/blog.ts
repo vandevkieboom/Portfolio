@@ -11,6 +11,7 @@ export default async function blogRoutes(server: FastifyInstance) {
           author: {
             select: { username: true },
           },
+          tags: true,
         },
         orderBy: { createdAt: 'desc' },
       });
@@ -30,6 +31,7 @@ export default async function blogRoutes(server: FastifyInstance) {
           author: {
             select: { username: true },
           },
+          tags: true,
         },
       });
       return reply.send(blog);
@@ -42,20 +44,11 @@ export default async function blogRoutes(server: FastifyInstance) {
     '/api/blogs',
     { onRequest: [server.authenticate] },
     async (request: FastifyRequest, reply: FastifyReply) => {
-      const { title, content } = request.body as { title: string; content: string };
-
-      const base64Images = content.match(/<img[^>]+src="data:image\/[^;]+;base64,([^"]+)"/g);
-
-      if (base64Images) {
-        for (const img of base64Images) {
-          const base64Data = img.split(',')[1];
-          const buffer = Buffer.from(base64Data, 'base64');
-
-          if (buffer.length > MAX_IMAGE_SIZE) {
-            return reply.status(400).send({ message: 'Image is too large. Max size is 5MB.' });
-          }
-        }
-      }
+      const { title, content, tags } = request.body as {
+        title: string;
+        content: string;
+        tags: string[];
+      };
 
       try {
         const blog = await prisma.blog.create({
@@ -63,15 +56,23 @@ export default async function blogRoutes(server: FastifyInstance) {
             title,
             content,
             authorId: request.user.userId,
+            tags: {
+              connectOrCreate: tags.map((tagName) => ({
+                where: { name: tagName },
+                create: { name: tagName },
+              })),
+            },
           },
           include: {
             author: {
               select: { username: true },
             },
+            tags: true,
           },
         });
         return reply.send(blog);
       } catch (err) {
+        console.error('Error creating blog:', err);
         return reply.status(500).send({ message: 'Internal Server Error' });
       }
     }

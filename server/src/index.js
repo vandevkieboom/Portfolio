@@ -18,6 +18,7 @@ const init = async () => {
     app = (0, fastify_1.default)({
         logger: true,
         disableRequestLogging: process.env.NODE_ENV === 'production',
+        bodyLimit: 5 * 1024 * 1024,
     });
     try {
         await app.register(cookie_1.default);
