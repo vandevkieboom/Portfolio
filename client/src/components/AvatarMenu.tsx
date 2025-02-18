@@ -54,7 +54,9 @@ const AvatarMenu = ({ user, onLogout, isPendingLogout }: AvatarMenuProps) => {
 
               <div className="ml-3">
                 <p className="text-sm font-medium text-gray-900 dark:text-white">{user.username}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {user.firstName} {user.lastName}
+                </p>
               </div>
             </div>
           </div>
