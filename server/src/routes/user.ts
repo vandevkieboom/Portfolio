@@ -13,7 +13,7 @@ export default async function userRoutes(server: FastifyInstance) {
       const decoded = server.jwt.verify<{ userId: number; role: string }>(token);
       const user = await prisma.user.findUnique({
         where: { id: decoded.userId },
-        select: { username: true, role: true },
+        select: { username: true, email: true, firstName: true, lastName: true, role: true },
       });
 
       if (!user) {

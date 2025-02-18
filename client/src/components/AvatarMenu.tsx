@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { User } from '@/api/api';
-import { FaUser, FaCog, FaSignOutAlt, FaShieldAlt } from 'react-icons/fa'; // You can add FaShieldAlt or any other icon for the new option
+import { FaUser, FaCog, FaSignOutAlt, FaShieldAlt } from 'react-icons/fa';
 
 interface AvatarMenuProps {
   user: User;
@@ -45,10 +45,18 @@ const AvatarMenu = ({ user, onLogout, isPendingLogout }: AvatarMenuProps) => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-md shadow-lg">
+        <div className="absolute right-0 mt-7 w-64 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-md shadow-lg">
           <div className="p-3 border-b border-gray-100 dark:border-gray-700">
-            <p className="text-sm font-medium text-gray-900 dark:text-white">{user.username}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">{user.role}</p>
+            <div className="flex items-center">
+              <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300">
+                {user.username.charAt(0).toUpperCase()}
+              </div>
+
+              <div className="ml-3">
+                <p className="text-sm font-medium text-gray-900 dark:text-white">{user.username}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
+              </div>
+            </div>
           </div>
 
           <div className="py-2">

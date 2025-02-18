@@ -2,8 +2,6 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useGetCurrentUser, useLogout } from '@/hooks/useAuth';
 import { FaFileDownload, FaMoon, FaSun, FaBars, FaTimes } from 'react-icons/fa';
-import { AiOutlineLogin } from 'react-icons/ai';
-import { IoMdLogOut } from 'react-icons/io';
 import { HiLogin, HiLogout } from 'react-icons/hi';
 import AvatarMenu from './AvatarMenu';
 
@@ -13,6 +11,10 @@ const Layout = ({ children }: { children: ReactNode }) => {
   const { data: user } = useGetCurrentUser();
   const [darkMode, setDarkMode] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    console.log(user); // Log the user to verify fields
+  }, [user]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -64,7 +66,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
             {!user ? (
               <button
                 onClick={() => router.push('/login')}
-                className={`text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors ${
+                className={`w-8 h-8 text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors ${
                   isActivePath('/login') ? 'text-black dark:text-white' : ''
                 }`}
               >

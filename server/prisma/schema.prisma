@@ -8,8 +8,9 @@ datasource db {
 }
 
 enum Role {
-  ADMIN
   USER
+  ADMIN
+  MODERATOR
 }
 
 model Tag {
@@ -29,11 +30,19 @@ model Blog {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  password  String
-  blogs     Blog[]
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          Int       @id @default(autoincrement())
+  username    String    @unique
+  email       String    @unique
+  password    String
+  firstName   String
+  lastName    String
+  bio         String?
+  avatarUrl   String?
+  dateOfBirth DateTime?
+  blogs       Blog[]
+  role        Role      @default(USER)
+  isActive    Boolean   @default(true)
+  lastLogin   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }

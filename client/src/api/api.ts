@@ -4,8 +4,16 @@ import { AxiosResponse } from 'axios';
 export interface User {
   id: number;
   username: string;
+  email: string;
   password: string;
-  role: 'USER' | 'ADMIN';
+  firstName: string;
+  lastName: string;
+  bio?: string;
+  avatarUrl?: string;
+  dateOfBirth?: string;
+  role: 'USER' | 'ADMIN' | 'MODERATOR';
+  isActive: boolean;
+  lastLogin?: string;
   createdAt: string;
   updatedAt: string;
 }
