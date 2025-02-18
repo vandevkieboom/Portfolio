@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { User } from '@/api/api';
-import { FaUser, FaCog, FaSignOutAlt, FaShieldAlt } from 'react-icons/fa';
+import { FaUser, FaCog, FaShieldAlt, FaPowerOff } from 'react-icons/fa';
 
 interface AvatarMenuProps {
   user: User;
@@ -93,7 +93,7 @@ const AvatarMenu = ({ user, onLogout, isPendingLogout }: AvatarMenuProps) => {
               disabled={isPendingLogout}
               className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
             >
-              <FaSignOutAlt size={14} />
+              <FaPowerOff size={14} />
               {isPendingLogout ? 'Logging out...' : 'Logout'}
             </button>
           </div>

@@ -1,4 +1,3 @@
-// In ProtectedRoute.tsx
 import { useRouter } from 'next/router';
 import { useGetCurrentUser } from '@/hooks/useAuth';
 import { useEffect, useState } from 'react';

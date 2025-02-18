@@ -13,7 +13,7 @@ async function userRoutes(server) {
             const decoded = server.jwt.verify(token);
             const user = await prisma_1.prisma.user.findUnique({
                 where: { id: decoded.userId },
-                select: { username: true, role: true },
+                select: { username: true, email: true, firstName: true, lastName: true, role: true },
             });
             if (!user) {
                 return reply.status(404).send({ message: 'User not found' });

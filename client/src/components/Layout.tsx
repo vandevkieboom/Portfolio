@@ -1,8 +1,8 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useGetCurrentUser, useLogout } from '@/hooks/useAuth';
-import { FaFileDownload, FaMoon, FaSun, FaBars, FaTimes } from 'react-icons/fa';
-import { HiLogin, HiLogout } from 'react-icons/hi';
+import { FaMoon, FaSun, FaBars, FaTimes } from 'react-icons/fa';
+import { HiLogin } from 'react-icons/hi';
 import AvatarMenu from './AvatarMenu';
 
 const Layout = ({ children }: { children: ReactNode }) => {
@@ -13,7 +13,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    console.log(user); // Log the user to verify fields
+    console.log(user);
   }, [user]);
 
   useEffect(() => {
