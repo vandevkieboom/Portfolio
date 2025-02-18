@@ -2,6 +2,10 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useGetCurrentUser, useLogout } from '@/hooks/useAuth';
 import { FaFileDownload, FaMoon, FaSun, FaBars, FaTimes } from 'react-icons/fa';
+import { AiOutlineLogin } from 'react-icons/ai';
+import { IoMdLogOut } from 'react-icons/io';
+import { HiLogin, HiLogout } from 'react-icons/hi';
+import AvatarMenu from './AvatarMenu';
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
@@ -64,16 +68,10 @@ const Layout = ({ children }: { children: ReactNode }) => {
                   isActivePath('/login') ? 'text-black dark:text-white' : ''
                 }`}
               >
-                Login
+                <HiLogin size={20} />
               </button>
             ) : (
-              <button
-                onClick={() => logout()}
-                disabled={isPending}
-                className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors"
-              >
-                {isPending ? 'Logging out...' : 'Logout'}
-              </button>
+              <AvatarMenu user={user} onLogout={logout} isPendingLogout={isPending} />
             )}
           </div>
 
@@ -103,7 +101,6 @@ const Layout = ({ children }: { children: ReactNode }) => {
                 {path.substring(1) || 'Home'}
               </button>
             ))}
-            s
             {!user ? (
               <button
                 onClick={() => {
@@ -117,16 +114,16 @@ const Layout = ({ children }: { children: ReactNode }) => {
                 Login
               </button>
             ) : (
-              <button
-                onClick={() => {
-                  logout();
-                  setMenuOpen(false);
-                }}
-                disabled={isPending}
-                className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors"
-              >
-                {isPending ? 'Logging out...' : 'Logout'}
-              </button>
+              <div className="md:hidden">
+                <AvatarMenu
+                  user={user}
+                  onLogout={() => {
+                    logout();
+                    setMenuOpen(false);
+                  }}
+                  isPendingLogout={isPending}
+                />
+              </div>
             )}
           </div>
         )}
