@@ -11,7 +11,20 @@ import {
   createBlog,
   getBlogById,
   CreateBlogData,
+  RegisterData,
+  register,
 } from '@/api/api';
+
+export const useRegister = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, RegisterData>({
+    mutationFn: register,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+    },
+  });
+};
 
 export const useGetBlogById = (id: string) => {
   return useQuery<Blog, Error>({

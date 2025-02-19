@@ -48,6 +48,14 @@ export interface CreateBlogData {
   tags: string[];
 }
 
+export interface RegisterData {
+  username: string;
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+}
+
 export const getBlogById = async (id: string): Promise<Blog> => {
   try {
     const response: AxiosResponse = await axios.get(`/blogs/${id}`);
@@ -96,6 +104,14 @@ export const getUsers = async (): Promise<User[]> => {
 export const login = async (credentials: LoginCredentials): Promise<void> => {
   try {
     await axios.post<AxiosResponse>('/login', credentials, { withCredentials: true });
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const register = async (data: RegisterData): Promise<void> => {
+  try {
+    await axios.post<AxiosResponse>('/register', data, { withCredentials: true });
   } catch (error) {
     throw error;
   }

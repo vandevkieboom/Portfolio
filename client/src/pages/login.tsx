@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useLogin } from '@/hooks/useAuth';
+import Link from 'next/link';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -70,6 +71,15 @@ export default function LoginPage() {
           >
             {loginMutation.isPending ? 'Signing in...' : 'Sign in'}
           </button>
+          <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-4">
+            Don't have an account?{' '}
+            <Link
+              href="/register"
+              className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
+            >
+              Create an account
+            </Link>
+          </p>
         </form>
       </div>
     </div>
