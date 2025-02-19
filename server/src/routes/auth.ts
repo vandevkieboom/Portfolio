@@ -7,7 +7,6 @@ export default async function authRoutes(server: FastifyInstance) {
     const { username, password } = request.body as { username: string; password: string };
 
     try {
-      // Convert username to lowercase for case-insensitive search
       const user = await prisma.user.findFirst({
         where: {
           username: { equals: username, mode: 'insensitive' },
@@ -44,7 +43,6 @@ export default async function authRoutes(server: FastifyInstance) {
     };
 
     try {
-      // Case-insensitive username check
       const existingUsername = await prisma.user.findFirst({
         where: {
           username: { equals: username, mode: 'insensitive' },
@@ -55,7 +53,6 @@ export default async function authRoutes(server: FastifyInstance) {
         return reply.status(400).send({ message: 'Username already taken' });
       }
 
-      // Case-insensitive email check
       const existingEmail = await prisma.user.findFirst({
         where: {
           email: { equals: email, mode: 'insensitive' },
@@ -68,7 +65,6 @@ export default async function authRoutes(server: FastifyInstance) {
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Store username in original case but search case-insensitive
       const user = await prisma.user.create({
         data: {
           username,

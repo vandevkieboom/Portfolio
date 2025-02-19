@@ -10,7 +10,6 @@ async function authRoutes(server) {
     server.post('/api/login', async (request, reply) => {
         const { username, password } = request.body;
         try {
-            // Convert username to lowercase for case-insensitive search
             const user = await prisma_1.prisma.user.findFirst({
                 where: {
                     username: { equals: username, mode: 'insensitive' },
@@ -36,7 +35,6 @@ async function authRoutes(server) {
     server.post('/api/register', async (request, reply) => {
         const { username, email, password, firstName, lastName } = request.body;
         try {
-            // Case-insensitive username check
             const existingUsername = await prisma_1.prisma.user.findFirst({
                 where: {
                     username: { equals: username, mode: 'insensitive' },
@@ -45,7 +43,6 @@ async function authRoutes(server) {
             if (existingUsername) {
                 return reply.status(400).send({ message: 'Username already taken' });
             }
-            // Case-insensitive email check
             const existingEmail = await prisma_1.prisma.user.findFirst({
                 where: {
                     email: { equals: email, mode: 'insensitive' },
@@ -55,7 +52,6 @@ async function authRoutes(server) {
                 return reply.status(400).send({ message: 'Email already registered' });
             }
             const hashedPassword = await bcryptjs_1.default.hash(password, 10);
-            // Store username in original case but search case-insensitive
             const user = await prisma_1.prisma.user.create({
                 data: {
                     username,

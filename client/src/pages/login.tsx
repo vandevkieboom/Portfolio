@@ -27,7 +27,6 @@ export default function LoginPage() {
     <div className="min-h-[80vh] flex items-center justify-center">
       <div className="max-w-md w-full bg-white dark:bg-gray-800 p-8 border border-gray-100 dark:border-gray-700">
         <h2 className="text-2xl font-bold text-center mb-3 dark:text-white">Sign in to your account</h2>
-        <p className="text-red-500 text-sm mb-5 text-center">currently only for admin</p>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">

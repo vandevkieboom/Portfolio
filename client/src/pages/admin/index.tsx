@@ -1,8 +1,12 @@
+import ProtectedRoute from '@/components/ProtectedRoute';
+
 const AdminPage = () => {
   return (
-    <div>
-      <h1>Admin Page</h1>
-    </div>
+    <ProtectedRoute requireAdmin={true}>
+      <div>
+        <h1>Admin Page</h1>
+      </div>
+    </ProtectedRoute>
   );
 };
 

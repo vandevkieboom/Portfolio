@@ -1,8 +1,12 @@
+import ProtectedRoute from '@/components/ProtectedRoute';
+
 const ProfilePage = () => {
   return (
-    <div>
-      <h1>Profile Page</h1>
-    </div>
+    <ProtectedRoute authenticationRequired={true}>
+      <div>
+        <h1>Profile Page</h1>
+      </div>
+    </ProtectedRoute>
   );
 };
 
