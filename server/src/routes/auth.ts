@@ -7,7 +7,12 @@ export default async function authRoutes(server: FastifyInstance) {
     const { username, password } = request.body as { username: string; password: string };
 
     try {
-      const user = await prisma.user.findUnique({ where: { username } });
+      // Convert username to lowercase for case-insensitive search
+      const user = await prisma.user.findFirst({
+        where: {
+          username: { equals: username, mode: 'insensitive' },
+        },
+      });
 
       if (!user || !(await bcrypt.compare(password, user.password))) {
         return reply.status(401).send({ message: 'Invalid credentials' });
@@ -39,18 +44,31 @@ export default async function authRoutes(server: FastifyInstance) {
     };
 
     try {
-      const existingUsername = await prisma.user.findUnique({ where: { username } });
+      // Case-insensitive username check
+      const existingUsername = await prisma.user.findFirst({
+        where: {
+          username: { equals: username, mode: 'insensitive' },
+        },
+      });
+
       if (existingUsername) {
         return reply.status(400).send({ message: 'Username already taken' });
       }
 
-      const existingEmail = await prisma.user.findUnique({ where: { email } });
+      // Case-insensitive email check
+      const existingEmail = await prisma.user.findFirst({
+        where: {
+          email: { equals: email, mode: 'insensitive' },
+        },
+      });
+
       if (existingEmail) {
         return reply.status(400).send({ message: 'Email already registered' });
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
+      // Store username in original case but search case-insensitive
       const user = await prisma.user.create({
         data: {
           username,
