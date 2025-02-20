@@ -13,7 +13,42 @@ import {
   CreateBlogData,
   RegisterData,
   register,
+  getComments,
+  createComment,
+  CreateCommentData,
+  deleteComment,
+  BlogComment,
 } from '@/api/api';
+
+export const useGetComments = (blogId: string) => {
+  return useQuery<BlogComment[], Error>({
+    queryKey: ['comments', blogId],
+    queryFn: () => getComments(blogId),
+    enabled: !!blogId,
+  });
+};
+
+export const useCreateComment = (blogId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<BlogComment, Error, CreateCommentData>({
+    mutationFn: (data) => createComment(blogId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['comments', blogId] });
+    },
+  });
+};
+
+export const useDeleteComment = (blogId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, string>({
+    mutationFn: deleteComment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['comments', blogId] });
+    },
+  });
+};
 
 export const useRegister = () => {
   const queryClient = useQueryClient();

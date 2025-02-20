@@ -56,6 +56,49 @@ export interface RegisterData {
   lastName: string;
 }
 
+export interface BlogComment {
+  id: number;
+  content: string;
+  authorId: number;
+  blogId: number;
+  createdAt: string;
+  updatedAt: string;
+  author: {
+    username: string;
+    avatarUrl?: string;
+  };
+}
+
+export interface CreateCommentData {
+  content: string;
+}
+
+export const getComments = async (blogId: string): Promise<BlogComment[]> => {
+  try {
+    const response: AxiosResponse<BlogComment[]> = await axios.get(`/blogs/${blogId}/comments`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createComment = async (blogId: string, data: CreateCommentData): Promise<BlogComment> => {
+  try {
+    const response: AxiosResponse = await axios.post(`/blogs/${blogId}/comments`, data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteComment = async (commentId: string): Promise<void> => {
+  try {
+    await axios.delete(`/comments/${commentId}`);
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getBlogById = async (id: string): Promise<Blog> => {
   try {
     const response: AxiosResponse = await axios.get(`/blogs/${id}`);

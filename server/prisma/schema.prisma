@@ -19,14 +19,29 @@ model Tag {
   blogs Blog[]
 }
 
-model Blog {
+model Comment {
   id        Int      @id @default(autoincrement())
-  title     String
-  content   String   @db.Text
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   author    User     @relation(fields: [authorId], references: [id])
   authorId  Int
+  blog      Blog     @relation(fields: [blogId], references: [id])
+  blogId    Int
+
+  @@index([blogId])
+  @@index([authorId])
+}
+
+model Blog {
+  id        Int       @id @default(autoincrement())
+  title     String
+  content   String    @db.Text
+  author    User      @relation(fields: [authorId], references: [id])
+  authorId  Int
   tags      Tag[]
-  createdAt DateTime @default(now())
+  comments  Comment[]
+  createdAt DateTime  @default(now())
 }
 
 model User {
@@ -40,6 +55,7 @@ model User {
   avatarUrl   String?
   dateOfBirth DateTime?
   blogs       Blog[]
+  comments    Comment[]
   role        Role      @default(USER)
   isActive    Boolean   @default(true)
   lastLogin   DateTime?

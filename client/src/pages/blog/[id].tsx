@@ -1,17 +1,30 @@
 import { useRouter } from 'next/router';
 import { useGetBlogById } from '@/hooks/useAuth';
-import { FaArrowLeft } from 'react-icons/fa';
+import { FaArrowLeft, FaCalendar } from 'react-icons/fa';
+import { useEffect } from 'react';
+import CommentSection from '@/components/CommentSection';
+
+// Helper function to create URL-friendly slug
+const createSlug = (title: string) => {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)+/g, '');
+};
 
 const BlogDetailSkeleton = () => (
-  <article className="bg-white dark:bg-gray-800 p-8 border border-gray-100 dark:border-gray-700 animate-pulse">
-    <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded mb-4 w-3/4"></div>
-    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-6 w-1/3"></div>
-    <div className="space-y-3">
-      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
-      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
-      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6"></div>
+  <div className="max-w-6xl mx-auto px-6 py-12 animate-pulse">
+    <div className="mb-8">
+      <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-24 mb-8"></div>
+      <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4"></div>
+      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48 mb-8"></div>
+      <div className="space-y-4">
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6"></div>
+      </div>
     </div>
-  </article>
+  </div>
 );
 
 const BlogDetailPage = () => {
@@ -19,53 +32,63 @@ const BlogDetailPage = () => {
   const { id } = router.query;
   const { data: blog, isLoading } = useGetBlogById(id as string);
 
+  // Update URL when blog data is loaded
+  useEffect(() => {
+    if (blog) {
+      const slug = createSlug(blog.title);
+      // Replace URL without reloading the page
+      window.history.replaceState(null, '', `/blog/${slug}`);
+    }
+  }, [blog]);
+
   if (isLoading) {
-    return (
-      <div className="max-w-4xl mx-auto px-6 py-12">
-        <BlogDetailSkeleton />
-      </div>
-    );
+    return <BlogDetailSkeleton />;
   }
 
   if (!blog) {
     return (
-      <div className="max-w-4xl mx-auto px-6 py-12">
+      <div className="max-w-6xl mx-auto px-6 py-12">
         <h1 className="text-2xl font-bold dark:text-white">Blog not found</h1>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12">
+    <article className="max-w-6xl mx-auto px-6 py-12">
       <button
         onClick={() => router.push('/blog')}
-        className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white mb-8 transition-colors"
+        className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white mb-8 transition-colors group"
       >
-        <FaArrowLeft size={16} />
+        <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" />
         Back to blogs
       </button>
 
-      <article className="bg-white dark:bg-gray-800 p-8 border border-gray-100 dark:border-gray-700">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">{blog.title}</h1>
-        <div className="text-sm text-gray-500 dark:text-gray-400 mb-8">
-          By {blog.author.username} • {new Date(blog.createdAt).toLocaleDateString()}
+      <div className="mb-12">
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">{blog.title}</h1>
+        <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 mb-8">
+          <FaCalendar size={16} />
+          <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
+          <span className="mx-2">•</span>
+          <span>By {blog.author.username}</span>
         </div>
+
+        {/* Tags */}
+        <div className="flex flex-wrap gap-2 mb-8">
+          {blog.tags.map((tag) => (
+            <span
+              key={tag.id}
+              className="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-3 py-1 rounded-full text-sm"
+            >
+              {tag.name}
+            </span>
+          ))}
+        </div>
+
+        {/* Blog Content */}
         <div className="prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: blog.content }} />
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Tags</h2>
-          <div className="flex flex-wrap gap-2">
-            {blog.tags.map((tag) => (
-              <span
-                key={tag.id}
-                className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1 rounded-full text-sm"
-              >
-                {tag.name}
-              </span>
-            ))}
-          </div>
-        </div>
-      </article>
-    </div>
+        <CommentSection blogId={id as string} />
+      </div>
+    </article>
   );
 };
 

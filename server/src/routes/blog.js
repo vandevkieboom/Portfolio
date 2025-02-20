@@ -40,6 +40,27 @@ async function blogRoutes(server) {
             return reply.status(500).send({ message: 'Internal Server Error' });
         }
     });
+    server.get('/api/blogs/:blogId/comments', async (request, reply) => {
+        const { blogId } = request.params;
+        try {
+            const comments = await prisma_1.prisma.comment.findMany({
+                where: { blogId: parseInt(blogId) },
+                include: {
+                    author: {
+                        select: {
+                            username: true,
+                            avatarUrl: true,
+                        },
+                    },
+                },
+                orderBy: { createdAt: 'desc' },
+            });
+            return reply.send(comments);
+        }
+        catch (err) {
+            return reply.status(500).send({ message: 'Internal Server Error' });
+        }
+    });
     server.post('/api/blogs', { onRequest: [server.authenticate] }, async (request, reply) => {
         const { title, content, tags } = request.body;
         try {
@@ -66,6 +87,53 @@ async function blogRoutes(server) {
         }
         catch (err) {
             console.error('Error creating blog:', err);
+            return reply.status(500).send({ message: 'Internal Server Error' });
+        }
+    });
+    server.post('/api/blogs/:blogId/comments', { onRequest: [server.authenticate] }, async (request, reply) => {
+        const { blogId } = request.params;
+        const { content } = request.body;
+        try {
+            const comment = await prisma_1.prisma.comment.create({
+                data: {
+                    content,
+                    authorId: request.user.userId,
+                    blogId: parseInt(blogId),
+                },
+                include: {
+                    author: {
+                        select: {
+                            username: true,
+                            avatarUrl: true,
+                        },
+                    },
+                },
+            });
+            return reply.status(201).send(comment);
+        }
+        catch (err) {
+            return reply.status(500).send({ message: 'Internal Server Error' });
+        }
+    });
+    server.delete('/api/comments/:commentId', { onRequest: [server.authenticate] }, async (request, reply) => {
+        const { commentId } = request.params;
+        try {
+            const comment = await prisma_1.prisma.comment.findUnique({
+                where: { id: parseInt(commentId) },
+            });
+            if (!comment) {
+                return reply.status(404).send({ message: 'Comment not found' });
+            }
+            // Check if user is author or admin
+            if (comment.authorId !== request.user.userId && request.user.role !== 'ADMIN') {
+                return reply.status(403).send({ message: 'Unauthorized' });
+            }
+            await prisma_1.prisma.comment.delete({
+                where: { id: parseInt(commentId) },
+            });
+            return reply.send({ message: 'Comment deleted successfully' });
+        }
+        catch (err) {
             return reply.status(500).send({ message: 'Internal Server Error' });
         }
     });
