@@ -1,5 +1,6 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { prisma } from '../lib/prisma';
+import { authenticateAdmin } from '../middleware/auth';
 
 export default async function userRoutes(server: FastifyInstance) {
   server.get('/api/user/me', async (request: FastifyRequest, reply: FastifyReply) => {
@@ -26,19 +27,15 @@ export default async function userRoutes(server: FastifyInstance) {
     }
   });
 
-  server.get(
-    '/api/users',
-    { onRequest: [server.authenticate] },
-    async (request: FastifyRequest, reply: FastifyReply) => {
-      try {
-        const users = await prisma.user.findMany();
-        if (users.length === 0) {
-          return reply.status(404).send({ message: 'No users found' });
-        }
-        return reply.send(users);
-      } catch (err) {
-        return reply.status(500).send({ message: 'Internal Server Error' });
+  server.get('/api/users', { onRequest: [authenticateAdmin] }, async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const users = await prisma.user.findMany();
+      if (users.length === 0) {
+        return reply.status(404).send({ message: 'No users found' });
       }
+      return reply.send(users);
+    } catch (err) {
+      return reply.status(500).send({ message: 'Internal Server Error' });
     }
-  );
+  });
 }

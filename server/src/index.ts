@@ -9,7 +9,8 @@ import blogRoutes from './routes/blog';
 
 declare module 'fastify' {
   interface FastifyInstance {
-    authenticate: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
+    authenticateUser: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
+    authenticateAdmin: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
   }
 }
 
@@ -44,7 +45,7 @@ const init = async () => {
     }
 
     await app.register(fastifyJWT, { secret: jwtSecret });
-    app.decorate('authenticateUser', authenticateAdmin);
+    app.decorate('authenticateUser', authenticateUser);
     app.decorate('authenticateAdmin', authenticateAdmin);
 
     await app.register(authRoutes);

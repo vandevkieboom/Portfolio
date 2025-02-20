@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = blogRoutes;
 const prisma_1 = require("../lib/prisma");
-const auth_1 = require("@/middleware/auth");
+const auth_1 = require("../middleware/auth");
 async function blogRoutes(server) {
     server.get('/api/blogs', async (request, reply) => {
         try {

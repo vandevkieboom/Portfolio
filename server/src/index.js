@@ -31,7 +31,7 @@ const init = async () => {
             throw new Error('JWT_SECRET is not defined in the environment variables');
         }
         await app.register(jwt_1.default, { secret: jwtSecret });
-        app.decorate('authenticateUser', auth_1.authenticateAdmin);
+        app.decorate('authenticateUser', auth_1.authenticateUser);
         app.decorate('authenticateAdmin', auth_1.authenticateAdmin);
         await app.register(auth_2.default);
         await app.register(user_1.default);

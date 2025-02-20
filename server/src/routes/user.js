@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = userRoutes;
 const prisma_1 = require("../lib/prisma");
+const auth_1 = require("../middleware/auth");
 async function userRoutes(server) {
     server.get('/api/user/me', async (request, reply) => {
         try {
@@ -24,7 +25,7 @@ async function userRoutes(server) {
             return reply.status(401).send({ message: 'Invalid token' });
         }
     });
-    server.get('/api/users', { onRequest: [server.authenticate] }, async (request, reply) => {
+    server.get('/api/users', { onRequest: [auth_1.authenticateAdmin] }, async (request, reply) => {
         try {
             const users = await prisma_1.prisma.user.findMany();
             if (users.length === 0) {
