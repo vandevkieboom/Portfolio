@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = blogRoutes;
 const prisma_1 = require("../lib/prisma");
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+const auth_1 = require("@/middleware/auth");
 async function blogRoutes(server) {
     server.get('/api/blogs', async (request, reply) => {
         try {
@@ -61,7 +61,7 @@ async function blogRoutes(server) {
             return reply.status(500).send({ message: 'Internal Server Error' });
         }
     });
-    server.post('/api/blogs', { onRequest: [server.authenticate] }, async (request, reply) => {
+    server.post('/api/blogs', { onRequest: [auth_1.authenticateAdmin] }, async (request, reply) => {
         const { title, content, tags } = request.body;
         try {
             const blog = await prisma_1.prisma.blog.create({
@@ -90,7 +90,7 @@ async function blogRoutes(server) {
             return reply.status(500).send({ message: 'Internal Server Error' });
         }
     });
-    server.post('/api/blogs/:blogId/comments', { onRequest: [server.authenticate] }, async (request, reply) => {
+    server.post('/api/blogs/:blogId/comments', { onRequest: [auth_1.authenticateUser] }, async (request, reply) => {
         const { blogId } = request.params;
         const { content } = request.body;
         try {
@@ -115,7 +115,7 @@ async function blogRoutes(server) {
             return reply.status(500).send({ message: 'Internal Server Error' });
         }
     });
-    server.delete('/api/comments/:commentId', { onRequest: [server.authenticate] }, async (request, reply) => {
+    server.delete('/api/comments/:commentId', { onRequest: [auth_1.authenticateUser] }, async (request, reply) => {
         const { commentId } = request.params;
         try {
             const comment = await prisma_1.prisma.comment.findUnique({
@@ -124,7 +124,6 @@ async function blogRoutes(server) {
             if (!comment) {
                 return reply.status(404).send({ message: 'Comment not found' });
             }
-            // Check if user is author or admin
             if (comment.authorId !== request.user.userId && request.user.role !== 'ADMIN') {
                 return reply.status(403).send({ message: 'Unauthorized' });
             }

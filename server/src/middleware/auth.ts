@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { prisma } from '../lib/prisma';
 
-export async function authenticate(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+export async function authenticateUser(request: FastifyRequest, reply: FastifyReply): Promise<void> {
   try {
     const token = request.cookies.token;
     if (!token) {
@@ -15,7 +15,21 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply)
       where: { id: request.user.userId },
     });
 
-    if (!user || user.role !== 'ADMIN') {
+    if (!user) {
+      return reply.status(401).send({ message: 'Unauthorized' });
+    }
+
+    request.user = { userId: user.id, role: user.role };
+  } catch (err) {
+    reply.send(err);
+  }
+}
+
+export async function authenticateAdmin(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+  try {
+    await authenticateUser(request, reply);
+
+    if (request.user.role !== 'ADMIN') {
       return reply.status(403).send({ message: 'Admin access required' });
     }
   } catch (err) {

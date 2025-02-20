@@ -37,7 +37,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ blogId }) => {
 
   if (isLoadingComments) {
     return (
-      <div className="bg-gray-100 mt-12 p-4 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all cursor-pointer">
+      <div className="mt-12">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Comments</h2>
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
@@ -52,7 +52,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ blogId }) => {
   }
 
   return (
-    <div className="bg-gray-100 mt-12 p-4 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all cursor-pointer">
+    <div className="mt-12">
       <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Comments</h2>
 
       {currentUser ? (

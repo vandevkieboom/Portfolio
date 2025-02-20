@@ -1,7 +1,6 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { prisma } from '../lib/prisma';
-
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+import { authenticateAdmin, authenticateUser } from '@/middleware/auth';
 
 export default async function blogRoutes(server: FastifyInstance) {
   server.get('/api/blogs', async (request: FastifyRequest, reply: FastifyReply) => {
@@ -65,7 +64,7 @@ export default async function blogRoutes(server: FastifyInstance) {
 
   server.post(
     '/api/blogs',
-    { onRequest: [server.authenticate] },
+    { onRequest: [authenticateAdmin] },
     async (request: FastifyRequest, reply: FastifyReply) => {
       const { title, content, tags } = request.body as {
         title: string;
@@ -103,7 +102,7 @@ export default async function blogRoutes(server: FastifyInstance) {
 
   server.post(
     '/api/blogs/:blogId/comments',
-    { onRequest: [server.authenticate] },
+    { onRequest: [authenticateUser] },
     async (request: FastifyRequest, reply: FastifyReply) => {
       const { blogId } = request.params as { blogId: string };
       const { content } = request.body as { content: string };
@@ -134,7 +133,7 @@ export default async function blogRoutes(server: FastifyInstance) {
 
   server.delete(
     '/api/comments/:commentId',
-    { onRequest: [server.authenticate] },
+    { onRequest: [authenticateUser] },
     async (request: FastifyRequest, reply: FastifyReply) => {
       const { commentId } = request.params as { commentId: string };
 
@@ -147,7 +146,6 @@ export default async function blogRoutes(server: FastifyInstance) {
           return reply.status(404).send({ message: 'Comment not found' });
         }
 
-        // Check if user is author or admin
         if (comment.authorId !== request.user.userId && request.user.role !== 'ADMIN') {
           return reply.status(403).send({ message: 'Unauthorized' });
         }

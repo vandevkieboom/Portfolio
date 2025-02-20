@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authenticate = authenticate;
+exports.authenticateUser = authenticateUser;
+exports.authenticateAdmin = authenticateAdmin;
 const prisma_1 = require("../lib/prisma");
-async function authenticate(request, reply) {
+async function authenticateUser(request, reply) {
     try {
         const token = request.cookies.token;
         if (!token) {
@@ -13,7 +14,19 @@ async function authenticate(request, reply) {
         const user = await prisma_1.prisma.user.findUnique({
             where: { id: request.user.userId },
         });
-        if (!user || user.role !== 'ADMIN') {
+        if (!user) {
+            return reply.status(401).send({ message: 'Unauthorized' });
+        }
+        request.user = { userId: user.id, role: user.role };
+    }
+    catch (err) {
+        reply.send(err);
+    }
+}
+async function authenticateAdmin(request, reply) {
+    try {
+        await authenticateUser(request, reply);
+        if (request.user.role !== 'ADMIN') {
             return reply.status(403).send({ message: 'Admin access required' });
         }
     }

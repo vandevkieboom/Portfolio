@@ -2,7 +2,7 @@ import Fastify, { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import fastifyCors from '@fastify/cors';
 import fastifyJWT from '@fastify/jwt';
 import fastifyCookie from '@fastify/cookie';
-import { authenticate } from './middleware/auth';
+import { authenticateUser, authenticateAdmin } from './middleware/auth';
 import authRoutes from './routes/auth';
 import userRoutes from './routes/user';
 import blogRoutes from './routes/blog';
@@ -44,7 +44,8 @@ const init = async () => {
     }
 
     await app.register(fastifyJWT, { secret: jwtSecret });
-    app.decorate('authenticate', authenticate);
+    app.decorate('authenticateUser', authenticateAdmin);
+    app.decorate('authenticateAdmin', authenticateAdmin);
 
     await app.register(authRoutes);
     await app.register(userRoutes);
