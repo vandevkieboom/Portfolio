@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { prisma } from '../lib/prisma';
-import { authenticateAdmin, authenticateUser } from '@/middleware/auth';
+import { authenticateAdmin, authenticateUser } from '../middleware/auth';
 
 export default async function blogRoutes(server: FastifyInstance) {
   server.get('/api/blogs', async (request: FastifyRequest, reply: FastifyReply) => {
