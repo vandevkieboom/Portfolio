@@ -4,7 +4,6 @@ import { FaArrowLeft, FaCalendar } from 'react-icons/fa';
 import { useEffect } from 'react';
 import CommentSection from '@/components/CommentSection';
 
-// Helper function to create URL-friendly slug
 const createSlug = (title: string) => {
   return title
     .toLowerCase()
@@ -32,11 +31,9 @@ const BlogDetailPage = () => {
   const { id } = router.query;
   const { data: blog, isLoading } = useGetBlogById(id as string);
 
-  // Update URL when blog data is loaded
   useEffect(() => {
     if (blog) {
       const slug = createSlug(blog.title);
-      // Replace URL without reloading the page
       window.history.replaceState(null, '', `/blog/${slug}`);
     }
   }, [blog]);
@@ -54,41 +51,46 @@ const BlogDetailPage = () => {
   }
 
   return (
-    <article className="max-w-6xl mx-auto px-6 py-12">
-      <button
-        onClick={() => router.push('/blog')}
-        className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white mb-8 transition-colors group"
-      >
-        <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" />
-        Back to blogs
-      </button>
+    <div className="min-h-screen flex flex-col">
+      <article className="flex-1 max-w-6xl mx-auto px-6 py-12 w-full">
+        <button
+          onClick={() => router.push('/blog')}
+          className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white mb-8 transition-colors group"
+        >
+          <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" />
+          Back to blogs
+        </button>
 
-      <div className="mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">{blog.title}</h1>
-        <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 mb-8">
-          <FaCalendar size={16} />
-          <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
-          <span className="mx-2">•</span>
-          <span>By {blog.author.username}</span>
+        <div className="mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">{blog.title}</h1>
+          <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 mb-8">
+            <FaCalendar size={16} />
+            <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
+            <span className="mx-2">•</span>
+            <span>By {blog.author.username}</span>
+          </div>
+
+          <div className="flex flex-wrap gap-2 mb-8">
+            {blog.tags.map((tag) => (
+              <span
+                key={tag.id}
+                className="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-3 py-1 rounded-full text-sm"
+              >
+                {tag.name}
+              </span>
+            ))}
+          </div>
+
+          <div className="prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: blog.content }} />
         </div>
+      </article>
 
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2 mb-8">
-          {blog.tags.map((tag) => (
-            <span
-              key={tag.id}
-              className="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-3 py-1 rounded-full text-sm"
-            >
-              {tag.name}
-            </span>
-          ))}
+      <section className="w-full bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
+        <div className="max-w-6xl mx-auto px-6">
+          <CommentSection blogId={id as string} />
         </div>
-
-        {/* Blog Content */}
-        <div className="prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: blog.content }} />
-        <CommentSection blogId={id as string} />
-      </div>
-    </article>
+      </section>
+    </div>
   );
 };
 

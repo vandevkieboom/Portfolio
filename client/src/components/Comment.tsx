@@ -25,8 +25,8 @@ const CommentComponent: React.FC<CommentProps> = ({ comment, onDelete }) => {
   };
 
   return (
-    <div className="border-b border-gray-200 dark:border-gray-700 pb-6">
-      <div className="flex justify-between items-start mb-2">
+    <div>
+      <div className="flex justify-between items-start mb-4">
         <div className="flex items-center gap-2">
           {comment.author.avatarUrl && (
             <img src={comment.author.avatarUrl} alt={comment.author.username} className="w-8 h-8 rounded-full" />
